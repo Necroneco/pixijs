@@ -721,7 +721,7 @@ export class TextStyle implements ITextStyle
             // Check if font already contains strings
             if (!(/([\"\'])[^\'\"]+\1/).test(fontFamily) && genericFontFamilies.indexOf(fontFamily) < 0)
             {
-                fontFamily = `"${fontFamily}"`;
+                fontFamily = `'${fontFamily}'`;
             }
             (fontFamilies as string[])[i] = fontFamily;
         }
