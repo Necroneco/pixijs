@@ -234,23 +234,24 @@ export class Text extends Sprite
             const dsOffsetText = isShadowPass ? Math.ceil(Math.max(1, height) + (style.padding * 2)) : 0;
             const dsOffsetShadow = dsOffsetText * this._resolution;
 
+            let shadowOffsetX = 0;
+            let shadowOffsetY = 0;
+
             if (isShadowPass)
             {
                 // On Safari, text with gradient and drop shadows together do not position correctly
                 // if the scale of the canvas is not 1: https://bugs.webkit.org/show_bug.cgi?id=197689
                 // Therefore we'll set the styles to be a plain black whilst generating this drop shadow
-                context.fillStyle = 'black';
-                context.strokeStyle = 'black';
 
                 const dropShadowColor = style.dropShadowColor;
                 const rgb = hex2rgb(typeof dropShadowColor === 'number' ? dropShadowColor : string2hex(dropShadowColor));
-                const dropShadowBlur = style.dropShadowBlur * this._resolution;
+                // const dropShadowBlur = style.dropShadowBlur * this._resolution;
                 const dropShadowDistance = style.dropShadowDistance * this._resolution;
 
-                context.shadowColor = `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${style.dropShadowAlpha})`;
-                context.shadowBlur = dropShadowBlur;
-                context.shadowOffsetX = Math.cos(style.dropShadowAngle) * dropShadowDistance;
-                context.shadowOffsetY = (Math.sin(style.dropShadowAngle) * dropShadowDistance) + dsOffsetShadow;
+                context.fillStyle = `rgba(${rgb[0] * 255},${rgb[1] * 255},${rgb[2] * 255},${style.dropShadowAlpha})`;
+                context.strokeStyle = context.fillStyle;
+                shadowOffsetX = Math.cos(style.dropShadowAngle) * dropShadowDistance;
+                shadowOffsetY = (Math.sin(style.dropShadowAngle) * dropShadowDistance) + dsOffsetShadow;
             }
             else
             {
@@ -294,8 +295,8 @@ export class Text extends Sprite
                 {
                     this.drawLetterSpacing(
                         lines[i],
-                        linePositionX + style.padding,
-                        linePositionY + style.padding - dsOffsetText,
+                        linePositionX + style.padding + shadowOffsetX,
+                        linePositionY + style.padding - dsOffsetText + shadowOffsetY,
                         true
                     );
                 }
@@ -304,8 +305,8 @@ export class Text extends Sprite
                 {
                     this.drawLetterSpacing(
                         lines[i],
-                        linePositionX + style.padding,
-                        linePositionY + style.padding - dsOffsetText
+                        linePositionX + style.padding + shadowOffsetX,
+                        linePositionY + style.padding - dsOffsetText + shadowOffsetY
                     );
                 }
             }
